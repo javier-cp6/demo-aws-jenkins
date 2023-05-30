@@ -4,10 +4,10 @@ Description: Lambda and API Gateway integration.
 Parameters:
   ApiName:
     Type: String
-    Default: demo-lambda-cloudformation
+    Default: demo-cloudformation
   DemoLambdaName:
     Type: String
-    Description: demo-lambda-cloudformation
+    Description: demo-cloudformation
 
 Resources:
   DemoLambda:
