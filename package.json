@@ -1,0 +1,11 @@
+{
+  "name": "lambda-docker-hello-world",
+  "version": "1.0.0",
+  "description": "demo docker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "j",
+  "license": "ISC"
+}
