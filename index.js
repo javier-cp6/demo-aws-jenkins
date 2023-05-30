@@ -4,7 +4,7 @@ exports.handler = async (event, context) => {
     
     const response = {
       statusCode: 200,
-      body: "Hello AWS from Jenkins!"
+      body: "Hello AWS, Github, and Jenkins!"
     };
   
     return response;

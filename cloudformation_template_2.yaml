@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lambda and API Gateway integration.
+
+Parameters:
+  ApiName:
+    Type: String
+    Default: demo-lambda-cloudformation
+  DemoLambdaName:
+    Type: String
+    Description: demo-lambda-cloudformation
+
+Resources:
+  DemoLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref DemoLambdaName
+      PackageType: Image
+      ImageConfig:
+        Command:
+          - "index.handler"
+      Timeout: 3
+      MemorySize: 128
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/demo-lambda-ex
+      Code:
+        ImageUri: !Sub ${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/lambda-docker-hello-world:latest
+
+  DemoRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Ref ApiName
+
+  DemoApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DemoRestApi
+      ParentId: !GetAtt DemoRestApi.RootResourceId
+      PathPart: myresource
+
+  DemoApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DemoRestApi
+      ResourceId: !Ref DemoApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+          - LambdaFunctionArn: !GetAtt DemoLambda.Arn
+
+  DemoApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - DemoApiMethod
+    Properties:
+      RestApiId: !Ref DemoRestApi
+
+  DemoApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref DemoRestApi
+      StageName: prod
+      DeploymentId: !Ref DemoApiDeployment
+
+  DemoLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DemoLambda
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub
+        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApiId}/*/*
+        - RestApiId: !Ref DemoRestApi
