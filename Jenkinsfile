@@ -29,6 +29,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry(env.ECR_URI, 'ecr:us-east-1:aws-credentials') {
+                        app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
                 }
