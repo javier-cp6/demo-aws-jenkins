@@ -4,7 +4,7 @@ exports.handler = async (event, context) => {
     
     const response = {
       statusCode: 200,
-      body: "Hello World!"
+      body: "Hello Jenkins!"
     };
   
     return response;
