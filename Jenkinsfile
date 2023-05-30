@@ -27,13 +27,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                script {
-                    withCredentials([string(credentialsId: 'ecr-uri', variable: 'ECR_REPO_URI')]) {
-                        withEnv(["ECR_REPO_URI=${ECR_REPO_URI}"]) {
-                            docker.withRegistry("$ECR_REPO_URI", 'ecr:us-east-1:aws-credentials') {
-                                app.push("${env.BUILD_NUMBER}")
-                                app.push("latest")
-                            }
+                withCredentials([string(credentialsId: 'ecr-uri', variable: 'ECR_REPO_URI')]) {
+                    script {
+                        docker.withRegistry("${ECR_REPO_URI}", 'ecr:us-east-1:aws-credentials') {
+                            app.push("${env.BUILD_NUMBER}")
+                            app.push("latest")
                         }
                     }
                 }
