@@ -4,7 +4,7 @@ exports.handler = async (event, context) => {
     
     const response = {
       statusCode: 200,
-      body: "Hello AWS, Github, and Jenkins!!!!"
+      body: "DevOps: CI/CD pipeline with AWS, Jenkins, Docker, and GitHub"
     };
   
     return response;
